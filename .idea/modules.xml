@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/gym-admin.iml" filepath="$PROJECT_DIR$/gym-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gym-common.iml" filepath="$PROJECT_DIR$/gym-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gym-portal.iml" filepath="$PROJECT_DIR$/gym-portal.iml" />
+    </modules>
+  </component>
+</project>
