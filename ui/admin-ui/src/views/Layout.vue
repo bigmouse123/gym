@@ -9,7 +9,7 @@
         SwitchButton,
         CaretBottom
     } from '@element-plus/icons-vue'
-    import avatar from '@/assets/default.png'
+    import defaultAvatar from '@/assets/default.png'
 
     //条目被点击后,调用的函数
     import {useRouter} from 'vue-router'
@@ -26,6 +26,16 @@
             router.push('/admin/' + command)
         }
     }
+
+    import {useAdminInfoStore} from '@/store/adminInfo.js'
+    import adminApi from "@/api/admin.js";
+
+    const adminInfoStore = useAdminInfoStore();
+
+    adminApi.adminInfo().then(result => {
+        //数据存储在pinia中
+        adminInfoStore.setAdminInfo(result.data)
+    })
 </script>
 
 <template>
@@ -92,7 +102,7 @@
                 <!-- command: 条目被点击后会触发,在事件函数上可以声明一个参数,接收条目对应的指令 -->
                 <el-dropdown placement="bottom-end" @command="handleCommand">
                     <span class="el-dropdown__box">
-                        <el-avatar :src="avatar"/>
+                        <el-avatar :src="adminInfoStore.admin.avatar?adminInfoStore.admin.avatar:defaultAvatar"/>
                         <el-icon>
                             <CaretBottom/>
                         </el-icon>

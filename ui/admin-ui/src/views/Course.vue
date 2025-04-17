@@ -232,10 +232,10 @@
                     />
                 </template>
             </el-table-column>
-            <el-table-column fixed="right" label="Operations">
+            <el-table-column align="center" width="200px" fixed="right" label="Operations">
                 <template #default="{ row }">
-                    <el-button type="primary" @click="showUpdateDialog(row.id)">编辑</el-button>
-                    <el-button type="danger" @click="deleteById(row.id)">删除</el-button>
+                    <el-button size="small" type="primary" @click="showUpdateDialog(row.id)">编辑</el-button>
+                    <el-button size="small" type="danger" @click="deleteById(row.id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>

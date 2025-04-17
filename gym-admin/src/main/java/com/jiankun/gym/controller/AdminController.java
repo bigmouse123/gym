@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiankun.gym.pojo.Admin;
 import com.jiankun.gym.pojo.query.AdminQuery;
 import com.jiankun.gym.service.IAdminService;
+import com.jiankun.gym.util.JwtUtil;
 import com.jiankun.gym.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
@@ -72,6 +73,37 @@ public class AdminController {
 
     @GetMapping("/selectById/{id}")
     public Result selectById(@PathVariable Integer id) {
+        Admin admin = adminService.getById(id);
+        return Result.ok(admin);
+    }
+
+    @PutMapping("/login")
+    public Result login(@RequestBody Admin admin) {
+        QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(!ObjectUtils.isEmpty(admin.getName()), "name", admin.getName());
+        Admin loginAdmin = adminService.getOne(queryWrapper);
+
+        //判断用户是否存在
+        if (ObjectUtils.isEmpty(loginAdmin)) {
+            return Result.error("用户名错误");
+        }
+        //判断密码是否正确
+        if (!loginAdmin.getPassword().equals(admin.getPassword())) {
+            return Result.error("密码错误");
+        }
+
+        //登陆成功
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", loginAdmin.getId());
+        map.put("name", loginAdmin.getName());
+        String token = JwtUtil.createToken(map);
+        return Result.ok("登录成功", token);
+    }
+
+    @GetMapping("/adminInfo")
+    public Result adminInfo(@RequestHeader(name = "Authorization") String token) {
+        Map<String, Object> map = JwtUtil.parseToken(token);
+        Integer id = (Integer) map.get("id");
         Admin admin = adminService.getById(id);
         return Result.ok(admin);
     }

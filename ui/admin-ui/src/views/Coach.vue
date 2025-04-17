@@ -158,6 +158,14 @@
         coach.value.introduction = introduction;
     }
 
+    //简介
+    const dialogIntroductionVisible = ref(false)
+    const introduction = ref('')
+    const showIntroduction = (intro) => {
+        dialogIntroductionVisible.value = true
+        introduction.value = intro
+    }
+
     loadData();
 
 </script>
@@ -208,7 +216,7 @@
                     <img :src="scope.row.avatar" style="max-height: 40px; max-width: 120px;"/>
                 </template>
             </el-table-column>
-<!--            <el-table-column prop="introduction" label="个人简介"/>-->
+            <!--            <el-table-column prop="introduction" label="个人简介"/>-->
             <el-table-column prop="status" label="状态">
                 <template #default="scope">
                     <el-switch
@@ -221,10 +229,11 @@
                 </template>
             </el-table-column>
             <el-table-column prop="updateTime" label="更新时间"/>
-            <el-table-column fixed="right" label="Operations">
+            <el-table-column align="center" width="200px" fixed="right" label="Operations">
                 <template #default="{ row }">
-                    <el-button type="primary" @click="showUpdateDialog(row.id)">编辑</el-button>
-                    <el-button type="danger" @click="deleteById(row.id)">删除</el-button>
+                    <el-button size="small" type="primary" @click="showUpdateDialog(row.id)">编辑</el-button>
+                    <el-button size="small" type="danger" @click="deleteById(row.id)">删除</el-button>
+                    <el-button size="small" type="success" @click="showIntroduction(row.introduction)">简介</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -278,6 +287,15 @@
                 <el-button type="primary" @click="addOrUpdate">
                     确定
                 </el-button>
+            </div>
+        </template>
+    </el-dialog>
+
+    <el-dialog v-model="dialogIntroductionVisible" width="60%" :lock-scroll="false">
+        <div v-html="introduction"></div>
+        <template #footer>
+            <div class="dialog-footer">
+                <el-button @click="dialogIntroductionVisible = false">关闭</el-button>
             </div>
         </template>
     </el-dialog>

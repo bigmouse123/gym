@@ -19,6 +19,12 @@ const adminApi = {
     },
     update(admin) {
         return service.put('/admin/update', admin)
+    },
+    login(admin) {
+        return service.put('/admin/login', admin)
+    },
+    adminInfo() {
+        return service.get(`/admin/adminInfo`)
     }
 }
 
