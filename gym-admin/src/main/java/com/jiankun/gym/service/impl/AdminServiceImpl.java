@@ -30,7 +30,9 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         IPage<Admin> page = new Page<>(adminQuery.getPage(), adminQuery.getLimit());
         QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(!ObjectUtils.isEmpty(adminQuery.getName()), "name", adminQuery.getName());
-        queryWrapper.like(!ObjectUtils.isEmpty(adminQuery.getEmail()), "email", adminQuery.getEmail());
+        queryWrapper.like(!ObjectUtils.isEmpty(adminQuery.getPhone()), "phone", adminQuery.getPhone());
+        queryWrapper.between(!ObjectUtils.isEmpty(adminQuery.getBeginUpdateTime()) && !ObjectUtils.isEmpty(adminQuery.getEndUpdateTime()),
+                "update_time", adminQuery.getBeginUpdateTime(), adminQuery.getEndUpdateTime());
         adminMapper.selectPage(page, queryWrapper);
         return page;
     }

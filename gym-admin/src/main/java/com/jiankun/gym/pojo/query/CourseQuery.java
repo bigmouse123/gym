@@ -7,14 +7,14 @@ import java.util.Date;
 /**
  * @author OfferKing
  * @version 1.0
- * @date 2025/4/14 11:38
+ * @date 2025/4/17 10:34
  */
 @Data
-public class AdminQuery {
+public class CourseQuery {
     private Integer page;
     private Integer limit;
     private String name;
-    private String phone;
-    private Date beginUpdateTime;
-    private Date endUpdateTime;
+    private Long coachId;
+    private Date beginTime;
+    private Date endTime;
 }

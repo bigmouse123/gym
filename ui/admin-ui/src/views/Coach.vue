@@ -1,12 +1,12 @@
 <script setup>
-    import adminApi from "@/api/admin.js";
+    import coachApi from "@/api/coach.js";
     import {reactive, ref} from 'vue'
     import {ElMessage, ElMessageBox} from "element-plus";
     import {Plus} from '@element-plus/icons-vue'
 
     const list = ref([]);
     const total = ref(0);
-    const adminQuery = reactive({
+    const coachQuery = reactive({
         name: '',
         phone: '',
         page: 1,
@@ -14,7 +14,7 @@
     })
 
     // function loadData() {
-    //     adminApi.list(adminQuery).then(result => {
+    //     coachApi.list(coachQuery).then(result => {
     //         if (result.code == 0) {
     //             list.value = result.data.records;
     //             total.value = result.data.total;
@@ -24,7 +24,7 @@
 
     //查询
     const loadData = () => {
-        adminApi.list(adminQuery).then(result => {
+        coachApi.list(coachQuery).then(result => {
             if (result.code == 0) {
                 list.value = result.data.records;
                 total.value = result.data.total;
@@ -45,7 +45,7 @@
             }
         )
             .then(() => {
-                adminApi.deleteById(id).then(result => {
+                coachApi.deleteById(id).then(result => {
                     if (result.code == 0) {
                         ElMessage.success(result.msg);
                         loadData();
@@ -77,7 +77,7 @@
             }
         )
             .then(() => {
-                adminApi.deleteAll(ids.value).then(result => {
+                coachApi.deleteAll(ids.value).then(result => {
                     if (result.code == 0) {
                         ElMessage.success(result.msg);
                         loadData();
@@ -90,27 +90,27 @@
 
     //添加、编辑
     const dialogFormVisible = ref(false);
-    const admin = ref({})
+    const coach = ref({})
     const title = ref();
     const showAddDialog = () => {
         dialogFormVisible.value = true;
-        admin.value = {};
+        coach.value = {};
         title.value = "添加";
     }
 
     const showUpdateDialog = (id) => {
         dialogFormVisible.value = true;
-        admin.value = {};
+        coach.value = {};
         title.value = "编辑";
-        adminApi.selectById(id).then(result => {
+        coachApi.selectById(id).then(result => {
             if (result.code == 0) {
-                admin.value = result.data;
+                coach.value = result.data;
             }
         })
     }
     const addOrUpdate = () => {
-        if (admin.value.id) {
-            adminApi.update(admin.value).then(result => {
+        if (coach.value.id) {
+            coachApi.update(coach.value).then(result => {
                 if (result.code == 0) {
                     ElMessage.success(result.msg)
                     dialogFormVisible.value = false
@@ -120,7 +120,7 @@
                 }
             })
         } else {
-            adminApi.add(admin.value).then(result => {
+            coachApi.add(coach.value).then(result => {
                 if (result.code == 0) {
                     ElMessage.success(result.msg)
                     dialogFormVisible.value = false
@@ -134,15 +134,15 @@
 
     //图片上传
     const handleAvatarSuccess = (result) => {
-        admin.value.avatar = result.data
+        coach.value.avatar = result.data
     }
 
     //更新状态
     const handleSwitchChange = (result) => {
-        const admin = ref({});
-        admin.id = result.id;
-        admin.status = result.status;
-        adminApi.update(admin).then(result => {
+        const coach = ref({});
+        coach.id = result.id;
+        coach.status = result.status;
+        coachApi.update(coach).then(result => {
             if (result.code == 0) {
                 ElMessage.success(result.msg)
             } else {
@@ -165,20 +165,20 @@
         </template>
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
             <el-form-item label="姓名">
-                <el-input v-model="adminQuery.name" placeholder="请输入姓名"></el-input>
+                <el-input v-model="coachQuery.name" placeholder="请输入姓名"></el-input>
             </el-form-item>
             <el-form-item label="电话">
-                <el-input v-model="adminQuery.phone" placeholder="请输入电话"></el-input>
+                <el-input v-model="coachQuery.phone" placeholder="请输入电话"></el-input>
             </el-form-item>
             <el-form-item label="更新时间" :label-width="100">
                 <el-date-picker
-                    v-model="adminQuery.beginUpdateTime"
+                    v-model="coachQuery.beginUpdateTime"
                     type="datetime"
                     value-format="YYYY-MM-DD HH:mm:ss"
                     placeholder="开始时间"
                 />
                 <el-date-picker
-                    v-model="adminQuery.endUpdateTime"
+                    v-model="coachQuery.endUpdateTime"
                     type="datetime"
                     value-format="YYYY-MM-DD HH:mm:ss"
                     placeholder="结束时间"
@@ -201,6 +201,7 @@
                     <img :src="scope.row.avatar" style="max-height: 40px; max-width: 120px;"/>
                 </template>
             </el-table-column>
+            <el-table-column prop="introduction" label="个人简介"/>
             <el-table-column prop="status" label="状态">
                 <template #default="scope">
                     <el-switch
@@ -221,8 +222,8 @@
             </el-table-column>
         </el-table>
         <el-pagination
-            v-model:current-page="adminQuery.page"
-            v-model:page-size="adminQuery.limit"
+            v-model:current-page="coachQuery.page"
+            v-model:page-size="coachQuery.limit"
             :page-sizes="[10, 20, 30, 40]"
             layout="total, sizes, prev, pager, next, jumper"
             :total="total"
@@ -233,18 +234,18 @@
 
     <!--添加、编辑弹出框-->
     <el-dialog v-model="dialogFormVisible" :title="title" width="500" :lock-scroll="false">
-        <el-form :model="admin">
+        <el-form :model="coach">
             <el-form-item label="姓名" :label-width="50">
-                <el-input v-model="admin.name" autocomplete="off"/>
+                <el-input v-model="coach.name" autocomplete="off"/>
             </el-form-item>
             <el-form-item label="密码" :label-width="50">
-                <el-input v-model="admin.password" autocomplete="off"/>
+                <el-input v-model="coach.password" autocomplete="off"/>
             </el-form-item>
             <el-form-item label="邮箱" :label-width="50">
-                <el-input v-model="admin.email" autocomplete="off"/>
+                <el-input v-model="coach.email" autocomplete="off"/>
             </el-form-item>
             <el-form-item label="手机" :label-width="50">
-                <el-input v-model="admin.phone" autocomplete="off"/>
+                <el-input v-model="coach.phone" autocomplete="off"/>
             </el-form-item>
             <el-form-item label="头像" :label-width="50">
                 <el-upload
@@ -252,11 +253,14 @@
                     action="/api/upload"
                     :show-file-list="false"
                     :on-success="handleAvatarSuccess">
-                    <img v-if="admin.avatar" :src="admin.avatar" class="avatar"/>
+                    <img v-if="coach.avatar" :src="coach.avatar" class="avatar"/>
                     <el-icon v-else class="avatar-uploader-icon">
                         <Plus/>
                     </el-icon>
                 </el-upload>
+            </el-form-item>
+            <el-form-item label="个人简介" :label-width="50">
+                <el-input v-model="coach.introduction" autocomplete="off"/>
             </el-form-item>
         </el-form>
         <template #footer>
