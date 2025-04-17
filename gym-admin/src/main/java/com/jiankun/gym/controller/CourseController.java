@@ -4,6 +4,7 @@ package com.jiankun.gym.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiankun.gym.pojo.Course;
 import com.jiankun.gym.pojo.query.CourseQuery;
+import com.jiankun.gym.pojo.vo.CourseVO;
 import com.jiankun.gym.service.ICourseService;
 import com.jiankun.gym.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import java.util.Arrays;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author Li
@@ -36,7 +37,7 @@ public class CourseController {
 //        Map<String, Object> map = new HashMap<>();
 //        map.put("total", page.getTotal());
 //        map.put("records", page.getRecords());
-        IPage<Course> page = courseService.list(courseQuery);
+        IPage<CourseVO> page = courseService.list(courseQuery);
         return Result.ok(page);
     }
 
@@ -53,14 +54,14 @@ public class CourseController {
     }
 
     @PostMapping("/add")
-    public Result add(@RequestBody Course Course) {
-        courseService.save(Course);
+    public Result add(@RequestBody Course course) {
+        courseService.save(course);
         return Result.ok("添加成功");
     }
 
     @PutMapping("/update")
-    public Result update(@RequestBody Course Course) {
-        courseService.updateById(Course);
+    public Result update(@RequestBody Course course) {
+        courseService.updateById(course);
         return Result.ok("更新成功");
     }
 

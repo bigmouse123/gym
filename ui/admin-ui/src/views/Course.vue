@@ -1,5 +1,6 @@
 <script setup>
     import courseApi from "@/api/course.js";
+    import coachApi from "@/api/coach.js";
     import {reactive, ref} from 'vue'
     import {ElMessage, ElMessageBox} from "element-plus";
     import {Plus} from '@element-plus/icons-vue'
@@ -151,6 +152,17 @@
 
     loadData();
 
+    //教练下拉框
+    const coachList = ref([]);
+    const loadCoachList = () => {
+        coachApi.selectAll().then(result => {
+            if (result.code == 0) {
+                coachList.value = result.data;
+            }
+        })
+    }
+
+    loadCoachList();
 </script>
 
 <template>
@@ -166,7 +178,15 @@
                 <el-input v-model="courseQuery.name" placeholder="请输入课程名称"></el-input>
             </el-form-item>
             <el-form-item label="教练">
-                <el-input v-model="courseQuery.coachId" placeholder="请输入教练"></el-input>
+                <el-select clearable v-model="courseQuery.coachId" placeholder="请选择教练"
+                           style="width: 140px">
+                    <el-option
+                        v-for="coach in coachList"
+                        :key="coach.id"
+                        :label="coach.name"
+                        :value="coach.id"
+                    />
+                </el-select>
             </el-form-item>
             <el-form-item label="创建时间" :label-width="100">
                 <el-date-picker
@@ -190,7 +210,7 @@
             <el-table-column type="selection" width="55"/>
             <el-table-column fixed prop="id" label="ID"/>
             <el-table-column prop="name" label="课程名称"/>
-            <el-table-column prop="coachId" label="教练"/>
+            <el-table-column prop="coachName" label="教练"/>
             <el-table-column prop="time" label="课程时间"/>
             <el-table-column prop="length" label="课程时长"/>
             <el-table-column prop="maxCount" label="最大人数"/>
@@ -231,15 +251,23 @@
     </el-card>
 
     <!--添加、编辑弹出框-->
-    <el-dialog v-model="dialogFormVisible" :title="title" width="500" :lock-scroll="false">
+    <el-dialog v-model="dialogFormVisible" :title="title" width="60%" :lock-scroll="false">
         <el-form :model="course">
-            <el-form-item label="课程名称" :label-width="50">
+            <el-form-item label="课程名称" :label-width="80">
                 <el-input v-model="course.name" autocomplete="off"/>
             </el-form-item>
-            <el-form-item label="教练" :label-width="50">
-                <el-input v-model="course.coachId" autocomplete="off"/>
+            <el-form-item label="教练" :label-width="80">
+                <el-select clearable v-model="course.coachId" placeholder="请选择教练"
+                           style="width: 140px">
+                    <el-option
+                        v-for="coach in coachList"
+                        :key="coach.id"
+                        :label="coach.name"
+                        :value="coach.id"
+                    />
+                </el-select>
             </el-form-item>
-            <el-form-item label="课程时间" :label-width="50">
+            <el-form-item label="课程时间" :label-width="80">
                 <el-date-picker
                     v-model="course.time"
                     type="datetime"
@@ -247,16 +275,16 @@
                     placeholder="开始时间"
                 />
             </el-form-item>
-            <el-form-item label="课程时长" :label-width="50">
-                <el-input v-model="course.length" autocomplete="off"/>
+            <el-form-item label="课程时长" :label-width="80">
+                <el-input-number v-model="course.length" :min="1" :max="100" :step="1" placeholder="课程时长"/>
             </el-form-item>
-            <el-form-item label="最大人数" :label-width="50">
-                <el-input v-model="course.maxCount" autocomplete="off"/>
+            <el-form-item label="最大人数" :label-width="80">
+                <el-input-number v-model="course.maxCount" :min="10" :max="120" :step="10" placeholder="最大人数"/>
             </el-form-item>
-            <el-form-item label="教室" :label-width="50">
+            <el-form-item label="教室" :label-width="80">
                 <el-input v-model="course.room" autocomplete="off"/>
             </el-form-item>
-            <el-form-item label="封面" :label-width="50">
+            <el-form-item label="封面" :label-width="80">
                 <el-upload
                     class="avatar-uploader"
                     action="/api/upload"

@@ -3,6 +3,7 @@
     import {reactive, ref} from 'vue'
     import {ElMessage, ElMessageBox} from "element-plus";
     import {Plus} from '@element-plus/icons-vue'
+    import WangEditor from "@/components/WangEditor.vue";
 
     const list = ref([]);
     const total = ref(0);
@@ -151,6 +152,12 @@
         })
     }
 
+    //富文本编辑器
+    const onEditorChange = (introduction) => {
+        console.log(introduction);
+        coach.value.introduction = introduction;
+    }
+
     loadData();
 
 </script>
@@ -201,7 +208,7 @@
                     <img :src="scope.row.avatar" style="max-height: 40px; max-width: 120px;"/>
                 </template>
             </el-table-column>
-            <el-table-column prop="introduction" label="个人简介"/>
+<!--            <el-table-column prop="introduction" label="个人简介"/>-->
             <el-table-column prop="status" label="状态">
                 <template #default="scope">
                     <el-switch
@@ -233,21 +240,21 @@
     </el-card>
 
     <!--添加、编辑弹出框-->
-    <el-dialog v-model="dialogFormVisible" :title="title" width="500" :lock-scroll="false">
+    <el-dialog v-model="dialogFormVisible" :title="title" width="60%" :lock-scroll="false">
         <el-form :model="coach">
-            <el-form-item label="姓名" :label-width="50">
+            <el-form-item label="姓名" :label-width="80">
                 <el-input v-model="coach.name" autocomplete="off"/>
             </el-form-item>
-            <el-form-item label="密码" :label-width="50">
+            <el-form-item label="密码" :label-width="80">
                 <el-input v-model="coach.password" autocomplete="off"/>
             </el-form-item>
-            <el-form-item label="邮箱" :label-width="50">
+            <el-form-item label="邮箱" :label-width="80">
                 <el-input v-model="coach.email" autocomplete="off"/>
             </el-form-item>
-            <el-form-item label="手机" :label-width="50">
+            <el-form-item label="手机" :label-width="80">
                 <el-input v-model="coach.phone" autocomplete="off"/>
             </el-form-item>
-            <el-form-item label="头像" :label-width="50">
+            <el-form-item label="头像" :label-width="80">
                 <el-upload
                     class="avatar-uploader"
                     action="/api/upload"
@@ -259,8 +266,10 @@
                     </el-icon>
                 </el-upload>
             </el-form-item>
-            <el-form-item label="个人简介" :label-width="50">
-                <el-input v-model="coach.introduction" autocomplete="off"/>
+            <el-form-item label="个人简介" :label-width="80">
+                <WangEditor :initValue="coach.introduction" @getEditorContent="onEditorChange" v-if="dialogFormVisible"
+                            @close="dialogFormVisible = false">
+                </WangEditor>
             </el-form-item>
         </el-form>
         <template #footer>

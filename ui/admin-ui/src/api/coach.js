@@ -19,6 +19,9 @@ const coachApi = {
     },
     update(coach) {
         return service.put('/coach/update', coach)
+    },
+    selectAll() {
+        return service.get(`/coach/selectAll`)
     }
 }
 

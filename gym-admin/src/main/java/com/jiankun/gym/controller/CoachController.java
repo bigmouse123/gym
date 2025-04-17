@@ -69,5 +69,10 @@ public class CoachController {
         Coach coach = coachService.getById(id);
         return Result.ok(coach);
     }
+
+    @GetMapping("/selectAll")
+    public Result selectAll() {
+        return Result.ok(coachService.list());
+    }
 }
 

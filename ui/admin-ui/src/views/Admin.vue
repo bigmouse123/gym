@@ -232,21 +232,21 @@
     </el-card>
 
     <!--添加、编辑弹出框-->
-    <el-dialog v-model="dialogFormVisible" :title="title" width="500" :lock-scroll="false">
+    <el-dialog v-model="dialogFormVisible" :title="title" width="60%" :lock-scroll="false">
         <el-form :model="admin">
-            <el-form-item label="姓名" :label-width="50">
+            <el-form-item label="姓名" :label-width="80">
                 <el-input v-model="admin.name" autocomplete="off"/>
             </el-form-item>
-            <el-form-item label="密码" :label-width="50">
+            <el-form-item label="密码" :label-width="80">
                 <el-input v-model="admin.password" autocomplete="off"/>
             </el-form-item>
-            <el-form-item label="邮箱" :label-width="50">
+            <el-form-item label="邮箱" :label-width="80">
                 <el-input v-model="admin.email" autocomplete="off"/>
             </el-form-item>
-            <el-form-item label="手机" :label-width="50">
+            <el-form-item label="手机" :label-width="80">
                 <el-input v-model="admin.phone" autocomplete="off"/>
             </el-form-item>
-            <el-form-item label="头像" :label-width="50">
+            <el-form-item label="头像" :label-width="80">
                 <el-upload
                     class="avatar-uploader"
                     action="/api/upload"
