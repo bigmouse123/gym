@@ -1,6 +1,6 @@
 package com.jiankun.gym.mapper;
 
-import com.jiankun.gym.pojo.Admin;
+import com.jiankun.gym.pojo.entity.Admin;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

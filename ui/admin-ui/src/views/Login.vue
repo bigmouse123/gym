@@ -5,38 +5,56 @@
     import {ElMessage} from "element-plus";
     import {useTokenStore} from "@/store/token.js";
     import {useRouter} from "vue-router";
+    import captchaApi from "@/api/captcha.js";
 
     const tokenStore = useTokenStore();
     const router = useRouter();
 
-    const admin = ref({})
+    const adminLoginDTO = ref({})
 
     const login = () => {
-        adminApi.login(admin.value).then(result => {
+        adminApi.login(adminLoginDTO.value).then(result => {
             if (result.code == 0) {
                 tokenStore.setToken(result.data)
                 ElMessage.success(result.msg);
                 router.push("/");
             } else {
                 ElMessage.error(result.msg);
+                loadCaptcha();
             }
         })
     }
+
+    const captcha = ref('')
+    const loadCaptcha = () => {
+        captchaApi.captcha().then(result => {
+            if (result.code == 0) {
+                captcha.value = result.data.captcha;
+                adminLoginDTO.value.uuid = result.data.uuid;
+            }
+        })
+    }
+    loadCaptcha();
 </script>
 
 <template>
     <div class="login-bg">
         <!-- 登录表单 -->
-        <el-form class="form-login" ref="form" size="large" autocomplete="off" :model="admin" :rules="rules">
+        <el-form class="form-login" ref="form" size="large" autocomplete="off" :model="adminLoginDTO" :rules="rules">
             <el-form-item>
                 <h1>登录</h1>
             </el-form-item>
             <el-form-item prop="name">
-                <el-input :prefix-icon="User" placeholder="请输入用户名" v-model="admin.name"></el-input>
+                <el-input :prefix-icon="User" placeholder="请输入用户名" v-model="adminLoginDTO.name"></el-input>
             </el-form-item>
             <el-form-item prop="password">
                 <el-input name="password" :prefix-icon="Lock" type="password" placeholder="请输入密码"
-                          v-model="admin.password"></el-input>
+                          v-model="adminLoginDTO.password"></el-input>
+            </el-form-item>
+            <el-form-item prop="captcha">
+                <el-input name="captcha" v-model="adminLoginDTO.captcha" placeholder="验证码" auto-complete="off"
+                          prefix-icon="el-icon-refresh"></el-input>
+                <img width="160px" :src="captcha" @click="loadCaptcha" alt="验证码"/>
             </el-form-item>
             <el-form-item class="flex">
                 <div class="flex">

@@ -1,4 +1,4 @@
-package com.jiankun.gym.pojo;
+package com.jiankun.gym.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -20,44 +20,51 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Coach implements Serializable {
+public class Course implements Serializable {
 
 
     /**
-     * 教练id
+     * 课程id
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 用户名
+     * 课程名
      */
     private String name;
 
     /**
-     * 用户密码，MD5加密
+     * 教练id
      */
-    private String password;
+    @TableField("coach_id")
+    private Long coachId;
 
     /**
-     * 电话
+     * 课程时间
      */
-    private String phone;
+    private Date time;
 
     /**
-     * 邮箱
+     * 课程时长
      */
-    private String email;
+    private Integer length;
 
     /**
-     * 头像
+     * 最大人数
      */
-    private String avatar;
+    @TableField("max_count")
+    private Integer maxCount;
 
     /**
-     * 简介
+     * 教室
      */
-    private String introduction;
+    private String room;
+
+    /**
+     * 课程封面
+     */
+    private String image;
 
     /**
      * 状态（1：正常 0：停用）

@@ -1,18 +1,21 @@
-package com.jiankun.gym.pojo;
+package com.jiankun.gym.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
+
 import java.io.Serializable;
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author Li
@@ -20,51 +23,40 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Course implements Serializable {
+public class Admin implements Serializable {
 
 
     /**
-     * 课程id
+     * 管理员id
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 课程名
+     * 用户名
      */
     private String name;
 
     /**
-     * 教练id
+     * 用户密码，MD5加密
      */
-    @TableField("coach_id")
-    private Long coachId;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
 
     /**
-     * 课程时间
+     * 电话
      */
-    private Date time;
+    private String phone;
 
     /**
-     * 课程时长
+     * 邮箱
      */
-    private Integer length;
+    private String email;
 
     /**
-     * 最大人数
+     * 头像
      */
-    @TableField("max_count")
-    private Integer maxCount;
-
-    /**
-     * 教室
-     */
-    private String room;
-
-    /**
-     * 课程封面
-     */
-    private String image;
+    private String avatar;
 
     /**
      * 状态（1：正常 0：停用）

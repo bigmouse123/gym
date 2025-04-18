@@ -3,13 +3,14 @@ package com.jiankun.gym.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jiankun.gym.pojo.Admin;
+import com.jiankun.gym.pojo.dto.AdminLoginDTO;
+import com.jiankun.gym.pojo.entity.Admin;
 import com.jiankun.gym.pojo.query.AdminQuery;
 import com.jiankun.gym.service.IAdminService;
 import com.jiankun.gym.util.JwtUtil;
 import com.jiankun.gym.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +32,8 @@ import java.util.Map;
 public class AdminController {
     @Autowired
     private IAdminService adminService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @GetMapping("/list")
     public Result list(AdminQuery adminQuery) {
@@ -78,9 +81,18 @@ public class AdminController {
     }
 
     @PutMapping("/login")
-    public Result login(@RequestBody Admin admin) {
+    public Result login(@RequestBody AdminLoginDTO adminLoginDTO) {
+        //判断验证码是否正确
+        String captcha = (String) redisTemplate.opsForValue().get("captcha:" + adminLoginDTO.getUuid());
+        if (ObjectUtils.isEmpty(captcha)) {
+            return Result.error("验证码失效");
+        }
+        if (!captcha.equals(adminLoginDTO.getCaptcha())) {
+            return Result.error("验证码错误");
+        }
+
         QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(!ObjectUtils.isEmpty(admin.getName()), "name", admin.getName());
+        queryWrapper.eq(!ObjectUtils.isEmpty(adminLoginDTO.getName()), "name", adminLoginDTO.getName());
         Admin loginAdmin = adminService.getOne(queryWrapper);
 
         //判断用户是否存在
@@ -88,7 +100,7 @@ public class AdminController {
             return Result.error("用户名错误");
         }
         //判断密码是否正确
-        if (!loginAdmin.getPassword().equals(admin.getPassword())) {
+        if (!loginAdmin.getPassword().equals(adminLoginDTO.getPassword())) {
             return Result.error("密码错误");
         }
 

@@ -24,6 +24,6 @@ public class WebConfigurer implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginInterceptor()).
                 addPathPatterns("/**").
-                excludePathPatterns("/admin/login", "/admin/logout");
+                excludePathPatterns("/admin/login", "/admin/logout", "/captcha");
     }
 }

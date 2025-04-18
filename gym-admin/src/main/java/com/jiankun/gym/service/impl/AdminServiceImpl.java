@@ -3,7 +3,7 @@ package com.jiankun.gym.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jiankun.gym.pojo.Admin;
+import com.jiankun.gym.pojo.entity.Admin;
 import com.jiankun.gym.mapper.AdminMapper;
 import com.jiankun.gym.pojo.query.AdminQuery;
 import com.jiankun.gym.service.IAdminService;

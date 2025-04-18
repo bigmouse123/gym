@@ -10,27 +10,33 @@
         CaretBottom
     } from '@element-plus/icons-vue'
     import defaultAvatar from '@/assets/default.png'
-
+    import {useTokenStore} from '@/store/token.js'
+    import {useAdminInfoStore} from '@/store/adminInfo.js'
     //条目被点击后,调用的函数
     import {useRouter} from 'vue-router'
+    import {ElMessage, ElMessageBox} from 'element-plus'
+    import adminApi from "@/api/admin.js";
+
+    const tokenStore = useTokenStore();
+    const adminInfoStore = useAdminInfoStore();
 
     const router = useRouter();
-    import {ElMessage, ElMessageBox} from 'element-plus'
+
 
     const handleCommand = (command) => {
         //判断指令
         if (command === 'logout') {
             //退出登录
+            tokenStore.removeToken();
+            adminInfoStore.removeAdminInfo()
+            ElMessage.success("退出成功")
+            //跳转到登录
+            router.push('/login')
         } else {
             //路由
             router.push('/admin/' + command)
         }
     }
-
-    import {useAdminInfoStore} from '@/store/adminInfo.js'
-    import adminApi from "@/api/admin.js";
-
-    const adminInfoStore = useAdminInfoStore();
 
     adminApi.adminInfo().then(result => {
         //数据存储在pinia中

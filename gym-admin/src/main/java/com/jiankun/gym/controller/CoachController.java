@@ -2,7 +2,7 @@ package com.jiankun.gym.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.jiankun.gym.pojo.Coach;
+import com.jiankun.gym.pojo.entity.Coach;
 import com.jiankun.gym.pojo.query.CoachQuery;
 import com.jiankun.gym.service.ICoachService;
 import com.jiankun.gym.util.Result;

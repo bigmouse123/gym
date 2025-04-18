@@ -1,21 +1,18 @@
-package com.jiankun.gym.pojo;
+package com.jiankun.gym.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
-
 import java.io.Serializable;
 import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- *
+ * 
  * </p>
  *
  * @author Li
@@ -23,11 +20,11 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Admin implements Serializable {
+public class Coach implements Serializable {
 
 
     /**
-     * 管理员id
+     * 教练id
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
@@ -40,7 +37,6 @@ public class Admin implements Serializable {
     /**
      * 用户密码，MD5加密
      */
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     /**
@@ -57,6 +53,11 @@ public class Admin implements Serializable {
      * 头像
      */
     private String avatar;
+
+    /**
+     * 简介
+     */
+    private String introduction;
 
     /**
      * 状态（1：正常 0：停用）
