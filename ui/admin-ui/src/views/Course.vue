@@ -4,6 +4,7 @@
     import {reactive, ref} from 'vue'
     import {ElMessage, ElMessageBox} from "element-plus";
     import {Plus} from '@element-plus/icons-vue'
+    import {useTokenStore} from '@/store/token.js'
 
     const list = ref([]);
     const total = ref(0);
@@ -162,7 +163,17 @@
         })
     }
 
+    const selectChange = (value) => {
+        console.log(value)
+    }
+
     loadCoachList();
+
+    const tokenStore = useTokenStore();
+    const headers = ref({
+        //携带token传递到后端
+        Authorization: tokenStore.token
+    })
 </script>
 
 <template>
@@ -178,7 +189,7 @@
                 <el-input v-model="courseQuery.name" placeholder="请输入课程名称"></el-input>
             </el-form-item>
             <el-form-item label="教练">
-                <el-select clearable v-model="courseQuery.coachId" placeholder="请选择教练"
+                <el-select clearable v-model="courseQuery.coachId" @change="selectChange" placeholder="请选择教练"
                            style="width: 140px">
                     <el-option
                         v-for="coach in coachList"
@@ -289,7 +300,8 @@
                     class="avatar-uploader"
                     action="/api/upload"
                     :show-file-list="false"
-                    :on-success="handleAvatarSuccess">
+                    :on-success="handleAvatarSuccess"
+                    :headers="headers">
                     <img v-if="course.image" :src="course.image" class="avatar"/>
                     <el-icon v-else class="avatar-uploader-icon">
                         <Plus/>

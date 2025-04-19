@@ -4,6 +4,7 @@
     import {ElMessage, ElMessageBox} from "element-plus";
     import {Plus} from '@element-plus/icons-vue'
     import WangEditor from "@/components/WangEditor.vue";
+    import {useTokenStore} from "@/store/token.js";
 
     const list = ref([]);
     const total = ref(0);
@@ -168,6 +169,12 @@
 
     loadData();
 
+    const tokenStore = useTokenStore();
+    const headers = ref({
+        //携带token传递到后端
+        Authorization: tokenStore.token
+    })
+
 </script>
 
 <template>
@@ -268,7 +275,8 @@
                     class="avatar-uploader"
                     action="/api/upload"
                     :show-file-list="false"
-                    :on-success="handleAvatarSuccess">
+                    :on-success="handleAvatarSuccess"
+                    :headers="headers">
                     <img v-if="coach.avatar" :src="coach.avatar" class="avatar"/>
                     <el-icon v-else class="avatar-uploader-icon">
                         <Plus/>

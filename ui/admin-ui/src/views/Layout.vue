@@ -7,7 +7,7 @@
         Crop,
         EditPen,
         SwitchButton,
-        CaretBottom
+        CaretBottom, Plus
     } from '@element-plus/icons-vue'
     import defaultAvatar from '@/assets/default.png'
     import {useTokenStore} from '@/store/token.js'
@@ -16,6 +16,7 @@
     import {useRouter} from 'vue-router'
     import {ElMessage, ElMessageBox} from 'element-plus'
     import adminApi from "@/api/admin.js";
+    import {ref} from "vue";
 
     const tokenStore = useTokenStore();
     const adminInfoStore = useAdminInfoStore();
@@ -23,6 +24,8 @@
     const router = useRouter();
 
 
+    const dialogUpdateAdminInfoVisible = ref(false)
+    const admin = ref({})
     const handleCommand = (command) => {
         //判断指令
         if (command === 'logout') {
@@ -32,6 +35,14 @@
             ElMessage.success("退出成功")
             //跳转到登录
             router.push('/login')
+        } else if (command === 'updateAdminInfo') {
+            dialogUpdateAdminInfoVisible.value = true;
+            //这样下会有严重问题，两个数据是绑定在一起的，修改了admin里面数据，adminInfoStore.admin也会修改，
+            //如果用户点击取消没有修改，就会造成adminInfoStore.admin里面数据修改了
+            // admin.value = adminInfoStore.admin;
+            Object.assign(admin.value, adminInfoStore.admin);
+        } else if (command === 'resetPassword') {
+            dialogResetPasswordDialog.value = true;
         } else {
             //路由
             router.push('/admin/' + command)
@@ -42,6 +53,81 @@
         //数据存储在pinia中
         adminInfoStore.setAdminInfo(result.data)
     })
+
+    const headers = ref({
+        //携带token传递到后端
+        Authorization: tokenStore.token
+    })
+    //图片上传
+    const handleAvatarSuccess = (result) => {
+        admin.value.avatar = result.data
+    }
+
+    const updateAdminInfo = () => {
+        adminApi.update(admin.value).then(result => {
+            if (result.code === 0) {
+                ElMessage({message: result.msg, type: 'success',})
+                dialogUpdateAdminInfoVisible.value = false
+            } else {
+                ElMessage.error(result.msg)
+            }
+        })
+    }
+
+    //重置密码
+    const adminPasswordDTO = ref({
+        'oldPassword': '',
+        'newPassword': ''
+    });
+    const dialogResetPasswordDialog = ref(false)
+    const resetForm = ref()
+    //自定义确认密码的校验函数
+    const rePasswordValid = (rule, value, callback) => {
+        if (value == null || value === '') {
+            return callback(new Error('请再次确认密码'))
+        }
+        //响应式对象要：registerData.value才能拿到值
+        if (adminPasswordDTO.value.newPassword !== value) {
+            return callback(new Error('两次输入密码不一致'))
+        }
+
+        callback()
+    }
+    const rules = ref({
+        oldPassword: [
+            {required: true, message: '请输入密码', trigger: 'blur'},
+            {min: 3, max: 16, message: '密码长度必须为3~16位', trigger: 'blur'}
+        ],
+        newPassword: [
+            {required: true, message: '请输入密码', trigger: 'blur'},
+            {min: 3, max: 16, message: '密码长度必须为3~16位', trigger: 'blur'}
+        ],
+        reNewPassword: [
+            {required: true, message: '请输入密码', trigger: 'blur'},
+            {validator: rePasswordValid, trigger: 'blur'}
+        ]
+    })
+    const resetPassword = async (formEl) => {
+        if (!formEl) return
+        await formEl.validate((valid, fields) => {
+            if (valid) {
+                adminApi.resetPassword(adminPasswordDTO.value).then(result => {
+                    if (result.code === 0) {
+                        ElMessage.success(result.msg)
+                        dialogUpdateAdminInfoVisible.value = false
+                        tokenStore.removeToken();
+                        adminInfoStore.removeAdminInfo();
+                        // 跳转到登录
+                        router.push('/login')
+                    } else {
+                        ElMessage.error(result.msg)
+                    }
+                })
+            } else {
+                ElMessage.error('表单验证失败');
+            }
+        })
+    }
 </script>
 
 <template>
@@ -115,7 +201,7 @@
                     </span>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item command="info" :icon="User">基本资料</el-dropdown-item>
+                            <el-dropdown-item command="updateAdminInfo" :icon="User">基本资料</el-dropdown-item>
                             <el-dropdown-item command="avatar" :icon="Crop">更换头像</el-dropdown-item>
                             <el-dropdown-item command="resetPassword" :icon="EditPen">重置密码</el-dropdown-item>
                             <el-dropdown-item command="logout" :icon="SwitchButton">退出登录</el-dropdown-item>
@@ -134,9 +220,96 @@
             <el-footer>后台管理 ©2024 Created by Gao</el-footer>
         </el-container>
     </el-container>
+
+    <!--个人信息-->
+    <el-dialog v-model="dialogUpdateAdminInfoVisible" :title="个人信息" width="60%" :lock-scroll="false">
+        <el-form :model="admin">
+            <el-form-item label="姓名" :label-width="80">
+                <el-input v-model="admin.name" autocomplete="off"/>
+            </el-form-item>
+            <el-form-item label="邮箱" :label-width="80">
+                <el-input v-model="admin.email" autocomplete="off"/>
+            </el-form-item>
+            <el-form-item label="手机" :label-width="80">
+                <el-input v-model="admin.phone" autocomplete="off"/>
+            </el-form-item>
+            <el-form-item label="头像" :label-width="80">
+                <el-upload
+                    class="avatar-uploader"
+                    action="/api/upload"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess"
+                    :headers="headers">
+                    <img v-if="admin.avatar" :src="admin.avatar" class="avatar"/>
+                    <el-icon v-else class="avatar-uploader-icon">
+                        <Plus/>
+                    </el-icon>
+                </el-upload>
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <div class="dialog-footer">
+                <el-button @click="dialogUpdateAdminInfoVisible = false">取消</el-button>
+                <el-button type="primary" @click="updateAdminInfo">
+                    确定
+                </el-button>
+            </div>
+        </template>
+    </el-dialog>
+
+    <el-dialog v-model="dialogResetPasswordDialog" title="重置密码" width="500" :lock-scroll="false">
+        <el-form ref="resetForm" :rules="rules" :model="adminPasswordDTO">
+            <el-form-item prop="oldPassword" label="原密码" :label-width="100">
+                <el-input v-model="adminPasswordDTO.oldPassword" autocomplete="off"/>
+            </el-form-item>
+            <el-form-item prop="newPassword" label="新密码" :label-width="100">
+                <el-input v-model="adminPasswordDTO.newPassword" autocomplete="off"/>
+            </el-form-item>
+            <el-form-item prop="reNewPassword" label="重复新密码" :label-width="100">
+                <el-input v-model="adminPasswordDTO.reNewPassword" autocomplete="off"/>
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <div class="dialog-footer">
+                <el-button @click="dialogResetPasswordDialog = false">取消</el-button>
+                <el-button type="primary" @click="resetPassword(resetForm)">
+                    确认
+                </el-button>
+            </div>
+        </template>
+    </el-dialog>
 </template>
 
+<style scoped>
+    .avatar-uploader .avatar {
+        width: 178px;
+        height: 178px;
+        display: block;
+    }
+</style>
+
 <style lang="scss" scoped>
+    .avatar-uploader .el-upload {
+        border: 1px dashed var(--el-border-color);
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: var(--el-transition-duration-fast);
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: var(--el-color-primary);
+    }
+
+    .el-icon.avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        text-align: center;
+    }
+
     .layout-container {
         height: 100vh;
 

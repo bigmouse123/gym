@@ -1,6 +1,7 @@
 package com.jiankun.gym.interceptor;
 
 import com.jiankun.gym.util.JwtUtil;
+import com.jiankun.gym.util.ThreadLocalUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -19,6 +20,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         String token = request.getHeader("Authorization");
         try {
             Map<String, Object> map = JwtUtil.parseToken(token);
+            ThreadLocalUtil.set(map);
             //放行
             return true;
         } catch (Exception e) {

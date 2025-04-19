@@ -32,9 +32,9 @@
 
     const toolbarConfig = {}
     //图片上传
-    // import {useTokenStore} from '@/store/token.js'
+    import {useTokenStore} from '@/store/token.js'
 
-    // const tokenStore = useTokenStore();
+    const tokenStore = useTokenStore();
     const editorConfig = {
         placeholder: '请输入内容...',
         MENU_CONF: {
@@ -42,9 +42,9 @@
                 fieldName: 'file',
                 server: '/api/upload',
                 // 自定义增加 http  header
-                // headers: {
-                //     Authorization: tokenStore.token,
-                // },
+                headers: {
+                    Authorization: tokenStore.token,
+                },
                 customInsert(res, insertFn) {
                     // res 即服务端的返回结果
                     console.log(res)

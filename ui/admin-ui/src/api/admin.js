@@ -25,6 +25,9 @@ const adminApi = {
     },
     adminInfo() {
         return service.get(`/admin/adminInfo`)
+    },
+    resetPassword(adminPasswordDTO) {
+        return service.put('/admin/resetPassword', adminPasswordDTO)
     }
 }
 

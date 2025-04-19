@@ -2,13 +2,16 @@ package com.jiankun.gym.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiankun.gym.pojo.dto.AdminLoginDTO;
+import com.jiankun.gym.pojo.dto.AdminPasswordDTO;
 import com.jiankun.gym.pojo.entity.Admin;
 import com.jiankun.gym.pojo.query.AdminQuery;
 import com.jiankun.gym.service.IAdminService;
 import com.jiankun.gym.util.JwtUtil;
 import com.jiankun.gym.util.Result;
+import com.jiankun.gym.util.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.ObjectUtils;
@@ -114,10 +117,27 @@ public class AdminController {
 
     @GetMapping("/adminInfo")
     public Result adminInfo(@RequestHeader(name = "Authorization") String token) {
-        Map<String, Object> map = JwtUtil.parseToken(token);
+//        Map<String, Object> map = JwtUtil.parseToken(token);
+        Map<String, Object> map = ThreadLocalUtil.get();
         Integer id = (Integer) map.get("id");
         Admin admin = adminService.getById(id);
         return Result.ok(admin);
+    }
+
+    @PutMapping("/resetPassword")
+    public Result resetPassword(@RequestHeader(name = "Authorization") String token,
+                                @RequestBody AdminPasswordDTO adminPasswordDTO) {
+        //        Map<String, Object> map = JwtUtil.parseToken(token);
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer id = (Integer) map.get("id");
+        Admin admin = adminService.getById(id);
+        if (!admin.getPassword().equals(adminPasswordDTO.getOldPassword())) {
+            Result.error("密码错误");
+        }
+        UpdateWrapper<Admin> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", id).set("password", adminPasswordDTO.getNewPassword());
+        adminService.update(admin, updateWrapper);
+        return Result.ok("修改成功");
     }
 
 }
