@@ -7,8 +7,10 @@ import com.jiankun.gym.pojo.query.CourseQuery;
 import com.jiankun.gym.pojo.vo.CourseVO;
 import com.jiankun.gym.service.ICourseService;
 import com.jiankun.gym.util.Result;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 
@@ -69,6 +71,19 @@ public class CourseController {
     public Result selectById(@PathVariable Integer id) {
         Course course = courseService.getById(id);
         return Result.ok(course);
+    }
+
+    //导出
+    @GetMapping("/exportExcel")
+    public void exportData(HttpServletResponse response) {
+        courseService.exportExcel(response);
+    }
+
+    //导入
+    @PostMapping("/importExcel")
+    public Result importExcel(MultipartFile file) {
+        courseService.importExcel(file);
+        return Result.ok("导入成功");
     }
 }
 

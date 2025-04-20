@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiankun.gym.pojo.entity.Coach;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiankun.gym.pojo.query.CoachQuery;
+import com.jiankun.gym.pojo.vo.CoachCountVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -15,4 +18,6 @@ import com.jiankun.gym.pojo.query.CoachQuery;
  */
 public interface ICoachService extends IService<Coach> {
     IPage<Coach> list(CoachQuery coachQuery);
+
+    List<CoachCountVO> selectCoachCount();
 }

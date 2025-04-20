@@ -3,8 +3,15 @@
     import coachApi from "@/api/coach.js";
     import {reactive, ref} from 'vue'
     import {ElMessage, ElMessageBox} from "element-plus";
-    import {Plus} from '@element-plus/icons-vue'
     import {useTokenStore} from '@/store/token.js'
+    import {
+        Delete,
+        Edit,
+        Upload,
+        Download,
+        Plus
+    } from '@element-plus/icons-vue'
+
 
     const list = ref([]);
     const total = ref(0);
@@ -174,6 +181,26 @@
         //携带token传递到后端
         Authorization: tokenStore.token
     })
+
+    //导入、导出excel
+    const exportExcel = () => {
+        courseApi.exportExcel().then((result) => {
+            let blob = new Blob([result], {type: "application/xlsx"});
+            let url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a"); // 创建a标签
+            link.href = url;
+            link.download = "课程列表.xlsx"; // 重命名文件
+            link.click();
+            URL.revokeObjectURL(url);
+        });
+    }
+
+    const importExcelSuccess = (result) => {
+        if (result.code == 0) {
+            ElMessage.success(result.msg)
+            loadData()
+        }
+    }
 </script>
 
 <template>
@@ -182,6 +209,21 @@
             <div class="header">
                 <el-button type="primary" @click="showAddDialog">添加</el-button>
                 <el-button type="primary" @click="deleteAll">批量删除</el-button>
+                <el-button type="primary" :icon="Download" @click="exportExcel">导出Excel</el-button>
+                <el-upload
+                    :icon="Upload"
+                    class="inline-block"
+                    multiple=""
+                    method="post"
+                    action="/api/course/importExcel"
+                    style="display:inline-block;margin-left: 12px"
+                    accept=".xlsx,.xls"
+                    :show-file-list="false"
+                    :on-success="importExcelSuccess"
+                    :headers="headers"
+                    name="file">
+                    <el-button type="primary" :icon="Upload">导入Excel</el-button>
+                </el-upload>
             </div>
         </template>
         <el-form :inline="true" :model="formInline" class="demo-form-inline">

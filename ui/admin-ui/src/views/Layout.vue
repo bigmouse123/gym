@@ -157,6 +157,12 @@
                     </el-icon>
                     <span>课程管理</span>
                 </el-menu-item>
+                <el-menu-item index="/chart">
+                    <el-icon>
+                        <Promotion/>
+                    </el-icon>
+                    <span>统计图表</span>
+                </el-menu-item>
                 <el-sub-menu>
                     <template #title>
                         <el-icon>

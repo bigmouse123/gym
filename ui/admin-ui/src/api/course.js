@@ -19,6 +19,15 @@ const courseApi = {
     },
     update(course) {
         return service.put('/course/update', course)
+    },
+    exportExcel() {
+        return service({
+            url: `/course/exportExcel`,
+            method: 'get',
+            //XMLHttpRequest 属性 responseType 是一个枚举字符串值，用于指定响应中包含的数据类型。
+            //"blob": response 是一个包含二进制数据的 Blob 对象。
+            responseType: 'blob'
+        })
     }
 }
 

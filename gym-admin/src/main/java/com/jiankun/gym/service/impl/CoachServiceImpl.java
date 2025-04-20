@@ -6,11 +6,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiankun.gym.pojo.entity.Coach;
 import com.jiankun.gym.mapper.CoachMapper;
 import com.jiankun.gym.pojo.query.CoachQuery;
+import com.jiankun.gym.pojo.vo.CoachCountVO;
 import com.jiankun.gym.service.ICoachService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+
+import java.util.List;
 
 /**
  * <p>
@@ -34,5 +37,10 @@ public class CoachServiceImpl extends ServiceImpl<CoachMapper, Coach> implements
         queryWrapper.between(!ObjectUtils.isEmpty(coachQuery.getBeginUpdateTime()) && !ObjectUtils.isEmpty(coachQuery.getEndUpdateTime()), "update_time", coachQuery.getBeginUpdateTime(), coachQuery.getEndUpdateTime());
         coachMapper.selectPage(page, queryWrapper);
         return page;
+    }
+
+    @Override
+    public List<CoachCountVO> selectCoachCount() {
+        return coachMapper.selectCoachCount();
     }
 }

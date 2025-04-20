@@ -2,4 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jiankun.gym.mapper.CoachMapper">
 
+    <select id="selectCoachCount" resultType="com.jiankun.gym.pojo.vo.CoachCountVO">
+        select co.name, count(*) as value
+        from coach as co inner join course as c
+        on co.id = c.coach_id
+        group by co.id
+    </select>
 </mapper>

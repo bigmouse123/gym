@@ -1,5 +1,6 @@
 package com.jiankun.gym.service.impl;
 
+import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -8,14 +9,21 @@ import com.jiankun.gym.mapper.CourseMapper;
 import com.jiankun.gym.pojo.entity.Coach;
 import com.jiankun.gym.pojo.entity.Course;
 import com.jiankun.gym.pojo.query.CourseQuery;
+import com.jiankun.gym.pojo.vo.CourseExcelVO;
 import com.jiankun.gym.pojo.vo.CourseVO;
 import com.jiankun.gym.service.ICourseService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiankun.gym.util.ExcelUtil;
+import com.listener.CourseExcelListener;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,5 +69,26 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         courseVOIPage.setRecords(courseVOList);
 
         return courseVOIPage;
+    }
+
+    @Override
+    public void exportExcel(HttpServletResponse response) {
+        List<Course> list = courseMapper.selectList(null);
+        ArrayList<CourseExcelVO> courseExcelVOList = new ArrayList<>();
+        for (Course course : list) {
+            CourseExcelVO courseExcelVO = new CourseExcelVO();
+            BeanUtils.copyProperties(course, courseExcelVO);
+            courseExcelVOList.add(courseExcelVO);
+        }
+        ExcelUtil.exportExcel(response, courseExcelVOList, CourseExcelVO.class, "course");
+    }
+
+    @Override
+    public void importExcel(MultipartFile file) {
+        try {
+            EasyExcel.read(file.getInputStream(), CourseExcelVO.class, new CourseExcelListener(courseMapper)).sheet().doRead();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
