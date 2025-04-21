@@ -140,5 +140,16 @@ public class AdminController {
         return Result.ok("修改成功");
     }
 
+    @GetMapping("/selectAssignedRole/{adminId}")
+    public Result<Map<String, Object>> selectAssignedRole(@PathVariable("adminId") Long adminId) {
+        Map<String, Object> map = adminService.selectAssignedRole(adminId);
+        return Result.ok(map);
+    }
+
+    @PostMapping("/assignRole")
+    public Result assignRole(Long adminId, Long[] roleIds) {
+        adminService.assignRole(adminId, roleIds);
+        return Result.ok("分配成功");
+    }
 }
 

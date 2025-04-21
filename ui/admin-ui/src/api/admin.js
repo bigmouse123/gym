@@ -28,6 +28,12 @@ const adminApi = {
     },
     resetPassword(adminPasswordDTO) {
         return service.put('/admin/resetPassword', adminPasswordDTO)
+    },
+    selectAssignedRole(adminId) {
+        return service.get(`/admin/selectAssignedRole/${adminId}`)
+    },
+    assignRole(adminId, roleIds) {
+        return service.post(`/admin/assignRole`, null, {params: {adminId, roleIds}});
     }
 }
 

@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
@@ -40,12 +39,6 @@ public class AdminRole implements Serializable {
      */
     @TableField("admin_id")
     private Long adminId;
-
-    /**
-     * 逻辑删除 0（true）未删除， 1（false）已删除
-     */
-    @TableLogic
-    private Integer deleted;
 
     /**
      * 创建时间

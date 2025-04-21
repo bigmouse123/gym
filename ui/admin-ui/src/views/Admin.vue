@@ -160,6 +160,26 @@
         Authorization: tokenStore.token
     })
 
+    //分配角色
+    //添加角色相关
+    const dialogRoleVisible = ref(false)
+    const roleList = ref([])
+    const assignedRoleIdList = ref([])
+    const showAssignedRoleDialog = (row) => {
+        admin.value = row;
+        adminApi.selectAssignedRole(row.id).then((result) => {
+            roleList.value = result.data.roleList;
+            assignedRoleIdList.value = result.data.assignedRoleIdList;
+            dialogRoleVisible.value = true;
+        });
+    }
+    const assignRole = () => {
+        let roleIds = assignedRoleIdList.value.join(',');
+        adminApi.assignRole(admin.value.id, roleIds).then((result) => {
+            ElMessage.success(result.msg)
+            dialogRoleVisible.value = false;
+        });
+    }
 </script>
 
 <template>
@@ -224,6 +244,7 @@
                 <template #default="{ row }">
                     <el-button size="small" type="primary" @click="showUpdateDialog(row.id)">编辑</el-button>
                     <el-button size="small" type="danger" @click="deleteById(row.id)">删除</el-button>
+                    <el-button type="success" size="small" @click="showAssignedRoleDialog(row)">角色</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -275,6 +296,24 @@
                 </el-button>
             </div>
         </template>
+    </el-dialog>
+
+    <!-- 角色分配dialog-->
+    <el-dialog title="分配角色" v-model="dialogRoleVisible" width="40%" :lock-scroll="false">
+        <el-form ref="form" :model="admin" label-width="80px">
+            <el-form-item label="用户名">
+                <el-input v-model="admin.name" disabled></el-input>
+            </el-form-item>
+            <el-form-item label="角色列表">
+                <el-checkbox-group v-model="assignedRoleIdList">
+                    <el-checkbox v-for="role in roleList" :key="role.id" :label="role.id">{{ role.name }}</el-checkbox>
+                </el-checkbox-group>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="assignRole">保存</el-button>
+                <el-button @click="dialogRoleVisible = false">取消</el-button>
+            </el-form-item>
+        </el-form>
     </el-dialog>
 </template>
 
