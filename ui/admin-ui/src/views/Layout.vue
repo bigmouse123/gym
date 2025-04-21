@@ -139,12 +139,32 @@
             <!-- element-plus的菜单标签 -->
             <el-menu active-text-color="#ffd04b" background-color="#232323" text-color="#fff"
                      router>
-                <el-menu-item index="/admin">
-                    <el-icon>
-                        <Management/>
-                    </el-icon>
-                    <span>管理员管理</span>
-                </el-menu-item>
+                <el-sub-menu>
+                    <template #title>
+                        <el-icon>
+                            <UserFilled/>
+                        </el-icon>
+                        <span>权限管理</span>
+                    </template>
+                    <el-menu-item index="/admin">
+                        <el-icon>
+                            <User/>
+                        </el-icon>
+                        <span>管理员管理</span>
+                    </el-menu-item>
+                    <el-menu-item index="/role">
+                        <el-icon>
+                            <Crop/>
+                        </el-icon>
+                        <span>角色管理</span>
+                    </el-menu-item>
+                    <el-menu-item index="/permission">
+                        <el-icon>
+                            <EditPen/>
+                        </el-icon>
+                        <span>权限管理</span>
+                    </el-menu-item>
+                </el-sub-menu>
                 <el-menu-item index="/coach">
                     <el-icon>
                         <Management/>
@@ -163,32 +183,6 @@
                     </el-icon>
                     <span>统计图表</span>
                 </el-menu-item>
-                <el-sub-menu>
-                    <template #title>
-                        <el-icon>
-                            <UserFilled/>
-                        </el-icon>
-                        <span>个人中心</span>
-                    </template>
-                    <el-menu-item index="/admin/info">
-                        <el-icon>
-                            <User/>
-                        </el-icon>
-                        <span>基本资料</span>
-                    </el-menu-item>
-                    <el-menu-item index="/admin/avatar">
-                        <el-icon>
-                            <Crop/>
-                        </el-icon>
-                        <span>更换头像</span>
-                    </el-menu-item>
-                    <el-menu-item index="/admin/resetPassword">
-                        <el-icon>
-                            <EditPen/>
-                        </el-icon>
-                        <span>重置密码</span>
-                    </el-menu-item>
-                </el-sub-menu>
             </el-menu>
         </el-aside>
         <!-- 右侧主区域 -->
