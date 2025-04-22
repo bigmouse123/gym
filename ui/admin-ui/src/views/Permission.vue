@@ -2,6 +2,7 @@
     import permissionApi from '@/api/permission.js'
     import {ref, reactive} from 'vue'
     import {ElMessage, ElMessageBox} from "element-plus";
+    import IconPicker from '@/components/IconPicker.vue'
 
     //保存返回树形结构数据，但是本质上List<PermissionVO> list;
     const list = ref([])
@@ -170,7 +171,7 @@
                 <el-input v-model="permission.name"></el-input>
             </el-form-item>
             <el-form-item label="图标" v-if="permission.type == 0 || permission.type === 1">
-                <el-input v-model="permission.icon"></el-input>
+                <IconPicker width="100px" v-model="permission.icon"></IconPicker>
             </el-form-item>
             <el-form-item label="排序">
                 <el-input-number
