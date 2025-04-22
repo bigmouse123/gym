@@ -9,6 +9,7 @@ import Coach from '@/views/Coach.vue'
 import Course from '@/views/Course.vue'
 import Chart from '@/views/Chart.vue'
 import Role from "@/views/Role.vue";
+import Permission from "@/views/Permission.vue";
 
 //创建路由器
 const router = createRouter({
@@ -19,6 +20,7 @@ const router = createRouter({
             path: '/', component: Layout, children: [
                 {path: '/admin', component: Admin},
                 {path: '/role', component: Role},
+                {path: '/permission', component: Permission},
                 {path: '/coach', component: Coach},
                 {path: '/course', component: Course},
                 {path: '/chart', component: Chart}

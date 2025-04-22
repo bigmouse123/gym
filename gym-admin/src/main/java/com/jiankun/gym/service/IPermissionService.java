@@ -2,6 +2,9 @@ package com.jiankun.gym.service;
 
 import com.jiankun.gym.pojo.entity.Permission;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jiankun.gym.pojo.vo.PermissionVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IPermissionService extends IService<Permission> {
 
+    List<PermissionVO> selectPermissionTree();
 }
