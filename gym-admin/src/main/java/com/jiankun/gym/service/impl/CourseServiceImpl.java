@@ -14,7 +14,7 @@ import com.jiankun.gym.pojo.vo.CourseVO;
 import com.jiankun.gym.service.ICourseService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiankun.gym.util.ExcelUtil;
-import com.listener.CourseExcelListener;
+import com.jiankun.gym.listener.CourseExcelListener;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

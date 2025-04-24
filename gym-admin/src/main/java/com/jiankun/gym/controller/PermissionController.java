@@ -10,6 +10,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -55,6 +56,18 @@ public class PermissionController {
     public Result selectById(@PathVariable Integer id) {
         Permission permission = permissionService.getById(id);
         return Result.ok(permission);
+    }
+
+    @GetMapping("/selectAssignedPermission/{roleId}")
+    public Result selectAssignedPermission(@PathVariable Long roleId) {
+        Map<String, Object> map = permissionService.selectAssignedPermission(roleId);
+        return Result.ok(map);
+    }
+
+    @PostMapping("/assignPermission")
+    public Result assignPermission(Long roleId, Long[] permissionIds) {
+        permissionService.assignPermission(roleId, permissionIds);
+        return Result.ok("分配成功");
     }
 }
 

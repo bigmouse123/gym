@@ -4,6 +4,7 @@
     import {ElMessage, ElMessageBox} from "element-plus";
     import {Plus} from '@element-plus/icons-vue'
     import {useTokenStore} from '@/store/token.js'
+    import permissionApi from "@/api/permission.js";
 
     const list = ref([]);
     const total = ref(0);
@@ -140,6 +141,53 @@
         Authorization: tokenStore.token
     })
 
+    const dialogPermissionVisible = ref(false)
+    const treeData = ref([])
+    const treeRef = ref()
+    const defaultProps = ref({
+        children: 'children',
+        label: 'name'
+    })
+    const showAssignedPermissionDialog = (row) => {
+        dialogPermissionVisible.value = true;
+        role.value = row;
+        permissionApi.selectAssignedPermission(row.id).then(result => {
+            if (result.code == 0) {
+                treeData.value = result.data.permissionVOList;
+                // treeRef.value.setCheckedKeys(result.data.assignedPermissionIdList);
+                let checkedLeafIdList = [];
+                getCheckedLeafIdList(result.data.permissionVOList, result.data.assignedPermissionIdList, checkedLeafIdList);
+                treeRef.value.setCheckedKeys(checkedLeafIdList);
+            }
+        })
+    }
+
+    const getCheckedLeafIdList = (permissionVOList, assignedPermissionIdList, checkedLeafIdList) => {
+        permissionVOList.forEach(permissionVO => {
+            assignedPermissionIdList.forEach(id => {
+                //这个角色下面的权限，而且是没有孩子的叶子节点
+                if (permissionVO.id == id && permissionVO.children.length == 0) {
+                    checkedLeafIdList.push(id);
+                } else if (permissionVO.id == id && permissionVO.children.length != 0) {
+                    getCheckedLeafIdList(permissionVO.children, assignedPermissionIdList, checkedLeafIdList);
+                }
+            })
+        });
+    }
+
+    const assignPermission = () => {
+        const checkedNodes = treeRef.value.getCheckedNodes(false, true);
+        console.log(checkedNodes);
+        let permissionIds = checkedNodes.map(node => node.id);
+        permissionIds = permissionIds.join(',');
+        permissionApi.assignPermission(role.value.id, permissionIds).then(result => {
+            if (result.code == 0) {
+                ElMessage.success(result.msg);
+                dialogPermissionVisible.value = false;
+            }
+        })
+    }
+
 </script>
 
 <template>
@@ -183,6 +231,7 @@
                 <template #default="{ row }">
                     <el-button size="small" type="primary" @click="showUpdateDialog(row.id)">编辑</el-button>
                     <el-button size="small" type="danger" @click="deleteById(row.id)">删除</el-button>
+                    <el-button size="small" type="success" @click="showAssignedPermissionDialog(row)">权限</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -216,6 +265,27 @@
                 <el-button type="primary" @click="addOrUpdate">
                     确定
                 </el-button>
+            </div>
+        </template>
+    </el-dialog>
+
+    <!--    权限分配的dialog-->
+    <el-dialog
+        title="分配权限"
+        v-model="dialogPermissionVisible"
+        width="40%" :lock-scroll="false">
+        <el-tree
+            :data="treeData"
+            ref="treeRef"
+            show-checkbox
+            node-key="id"
+            default-expand-all
+            :props="defaultProps">
+        </el-tree>
+        <template #footer>
+            <div class="dialog-footer">
+                <el-button type="primary" @click="assignPermission()">保存</el-button>
+                <el-button @click="dialogPermissionVisible = false">取消</el-button>
             </div>
         </template>
     </el-dialog>

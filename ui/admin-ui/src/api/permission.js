@@ -16,6 +16,12 @@ const permissionApi = {
     },
     update(permission) {
         return service.put('/permission/update', permission)
+    },
+    selectAssignedPermission(roleId) {
+        return service.get(`/permission/selectAssignedPermission/${roleId}`)
+    },
+    assignPermission(roleId, permissionIds) {
+        return service.post(`/permission/assignPermission`, null, {params: {roleId, permissionIds}})
     }
 }
 
