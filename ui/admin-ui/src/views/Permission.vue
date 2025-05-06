@@ -72,7 +72,10 @@
         } else {
             //添加顶级菜单
             title.value = "添加顶级菜单";
-            typeDisabled.value = true;
+            typeDisabled.value = false;
+            type0Disabled.value = false;
+            type1Disabled.value = false;
+            type2Disabled.value = true;
             permission.value.type = 0;
             permission.value.parentId = 0;
         }

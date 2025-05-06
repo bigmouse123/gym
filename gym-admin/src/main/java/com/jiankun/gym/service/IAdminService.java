@@ -22,4 +22,6 @@ public interface IAdminService extends IService<Admin> {
     Map<String, Object> selectAssignedRole(Long adminId);
 
     void assignRole(Long adminId, Long[] roleIds);
+
+    Map<String, Object> selectAdminPermissionInfoById(Integer id);
 }

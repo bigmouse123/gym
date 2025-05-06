@@ -117,11 +117,12 @@ public class AdminController {
 
     @GetMapping("/adminInfo")
     public Result adminInfo(@RequestHeader(name = "Authorization") String token) {
-//        Map<String, Object> map = JwtUtil.parseToken(token);
-        Map<String, Object> map = ThreadLocalUtil.get();
-        Integer id = (Integer) map.get("id");
-        Admin admin = adminService.getById(id);
-        return Result.ok(admin);
+//        Map<String, Object> tokenMap = JwtUtil.parseToken(token);
+        Map<String, Object> tokenMap = ThreadLocalUtil.get();
+        Integer id = (Integer) tokenMap.get("id");
+//        Admin admin = adminService.getById(id);
+        Map<String, Object> map = adminService.selectAdminPermissionInfoById(id);
+        return Result.ok(map);
     }
 
     @PutMapping("/resetPassword")

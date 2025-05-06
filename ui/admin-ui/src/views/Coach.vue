@@ -5,6 +5,7 @@
     import {Plus} from '@element-plus/icons-vue'
     import WangEditor from "@/components/WangEditor.vue";
     import {useTokenStore} from "@/store/token.js";
+    import hasBtnPermission from "@/utils/btnPermission.js"
 
     const list = ref([]);
     const total = ref(0);
@@ -181,8 +182,10 @@
     <el-card>
         <template #header>
             <div class="header">
-                <el-button type="primary" @click="showAddDialog">添加</el-button>
-                <el-button type="primary" @click="deleteAll">批量删除</el-button>
+                <el-button type="primary" @click="showAddDialog" :disabled="!hasBtnPermission('coach:add')">添加
+                </el-button>
+                <el-button type="primary" @click="deleteAll" :disabled="!hasBtnPermission('coach:deleteAll')">批量删除
+                </el-button>
             </div>
         </template>
         <el-form :inline="true" :model="formInline" class="demo-form-inline">

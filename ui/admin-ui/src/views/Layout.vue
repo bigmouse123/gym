@@ -23,6 +23,22 @@
 
     const router = useRouter();
 
+    // 菜单  用户管理， 分类管理， 商品管理
+    const menuData = ref([
+        {
+            name: '权限管理', icon: 'GobletFull', children: [
+                {name: '管理员管理', icon: 'GobletSquareFull', path: "/admin"},
+                {name: '角色管理', icon: 'TrendCharts', path: "/role"},
+                {name: '权限管理', icon: 'TrendCharts', path: "/permission"},
+            ]
+        },
+        {
+            name: '商品分类管理', icon: 'Notebook', children: [
+                {name: '商品管理', icon: 'Document', path: "/product"},
+                {name: '分类管理', icon: 'Calendar', path: "/category"},
+            ]
+        }
+    ]);
 
     const dialogUpdateAdminInfoVisible = ref(false)
     const admin = ref({})
@@ -51,7 +67,9 @@
 
     adminApi.adminInfo().then(result => {
         //数据存储在pinia中
-        adminInfoStore.setAdminInfo(result.data)
+        adminInfoStore.setAdminInfo(result.data.admin)
+        adminInfoStore.setBtns(result.data.btns)
+        menuData.value = result.data.routers
     })
 
     const headers = ref({
@@ -137,52 +155,81 @@
         <el-aside width="200px">
             <div class="el-aside__logo"></div>
             <!-- element-plus的菜单标签 -->
-            <el-menu active-text-color="#ffd04b" background-color="#232323" text-color="#fff"
-                     router>
-                <el-sub-menu>
-                    <template #title>
+            <!--            <el-menu active-text-color="#ffd04b" background-color="#232323" text-color="#fff"
+                                 router>
+                            <el-sub-menu>
+                                <template #title>
+                                    <el-icon>
+                                        <UserFilled/>
+                                    </el-icon>
+                                    <span>权限管理</span>
+                                </template>
+                                <el-menu-item index="/admin">
+                                    <el-icon>
+                                        <User/>
+                                    </el-icon>
+                                    <span>管理员管理</span>
+                                </el-menu-item>
+                                <el-menu-item index="/role">
+                                    <el-icon>
+                                        <Crop/>
+                                    </el-icon>
+                                    <span>角色管理</span>
+                                </el-menu-item>
+                                <el-menu-item index="/permission">
+                                    <el-icon>
+                                        <EditPen/>
+                                    </el-icon>
+                                    <span>权限管理</span>
+                                </el-menu-item>
+                            </el-sub-menu>
+                            <el-menu-item index="/coach">
+                                <el-icon>
+                                    <Management/>
+                                </el-icon>
+                                <span>教练管理</span>
+                            </el-menu-item>
+                            <el-menu-item index="/course">
+                                <el-icon>
+                                    <Promotion/>
+                                </el-icon>
+                                <span>课程管理</span>
+                            </el-menu-item>
+                            <el-menu-item index="/chart">
+                                <el-icon>
+                                    <Promotion/>
+                                </el-icon>
+                                <span>统计图表</span>
+                            </el-menu-item>
+                        </el-menu>-->
+            <el-menu active-text-color="#ffd04b" background-color="#232323" text-color="#fff" router>
+                <!-- 动态生成菜单 -->
+                <template v-for="(menu, index) in menuData" :index="index.toString()">
+                    <el-sub-menu v-if="menu.children?.length>0" :index="menu.name">
+                        <template #title>
+                            <component
+                                class="icons"
+                                :is="menu.icon"
+                                style="width: 1em; height: 1em; margin-right: 8px">
+                            </component>
+                            <span>{{ menu.name }}</span>
+                        </template>
+                        <el-menu-item v-for="(child, ind) in menu.children" :index="child.path">
+                            <el-icon>
+                                <component
+                                    :is="child.icon">
+                                </component>
+                            </el-icon>
+                            <span>{{ child.name }}</span>
+                        </el-menu-item>
+                    </el-sub-menu>
+                    <el-menu-item v-else :index="menu.path">
                         <el-icon>
-                            <UserFilled/>
+                            <component :is="menu.icon"></component>
                         </el-icon>
-                        <span>权限管理</span>
-                    </template>
-                    <el-menu-item index="/admin">
-                        <el-icon>
-                            <User/>
-                        </el-icon>
-                        <span>管理员管理</span>
+                        <span>{{ menu.name }}</span>
                     </el-menu-item>
-                    <el-menu-item index="/role">
-                        <el-icon>
-                            <Crop/>
-                        </el-icon>
-                        <span>角色管理</span>
-                    </el-menu-item>
-                    <el-menu-item index="/permission">
-                        <el-icon>
-                            <EditPen/>
-                        </el-icon>
-                        <span>权限管理</span>
-                    </el-menu-item>
-                </el-sub-menu>
-                <el-menu-item index="/coach">
-                    <el-icon>
-                        <Management/>
-                    </el-icon>
-                    <span>教练管理</span>
-                </el-menu-item>
-                <el-menu-item index="/course">
-                    <el-icon>
-                        <Promotion/>
-                    </el-icon>
-                    <span>课程管理</span>
-                </el-menu-item>
-                <el-menu-item index="/chart">
-                    <el-icon>
-                        <Promotion/>
-                    </el-icon>
-                    <span>统计图表</span>
-                </el-menu-item>
+                </template>
             </el-menu>
         </el-aside>
         <!-- 右侧主区域 -->

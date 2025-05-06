@@ -6,6 +6,7 @@ import com.jiankun.gym.pojo.entity.Permission;
 import com.jiankun.gym.mapper.PermissionMapper;
 import com.jiankun.gym.pojo.entity.RolePermission;
 import com.jiankun.gym.pojo.vo.PermissionVO;
+import com.jiankun.gym.pojo.vo.RouterVO;
 import com.jiankun.gym.service.IPermissionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
@@ -78,6 +79,60 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             rolePermission.setPermissionId(permissionId);
             rolePermissionMapper.insert(rolePermission);
         }
+    }
+
+    @Override
+    public List<RouterVO> selectRouterTreeByAdminId(Integer id) {
+        //查找用户所有的权限
+        List<Permission> permissionList = permissionMapper.selectPermissionByAdminId(id);
+        List<PermissionVO> permissionVOList = new ArrayList<>();
+        permissionList.forEach(permission -> {
+            PermissionVO permissionVO = new PermissionVO();
+            BeanUtils.copyProperties(permission, permissionVO);
+            permissionVOList.add(permissionVO);
+        });
+        //构建树形结构
+        List<PermissionVO> permissionVOTree = buildTree(permissionVOList);
+        //转换为路由结构
+        List<RouterVO> routerTreeList = buildRouterTree(permissionVOTree);
+        return routerTreeList;
+    }
+
+    @Override
+    public List<String> selectBtnListByAdmminId(Integer id) {
+        List<Permission> permissionList = permissionMapper.selectPermissionByAdminId(id);
+        List<String> btnList = new ArrayList<>();
+        for (Permission permission : permissionList) {
+            if (permission.getType() == 2) {
+                btnList.add(permission.getPermissionValue());
+            }
+        }
+        return btnList;
+    }
+
+    private List<RouterVO> buildRouterTree(List<PermissionVO> permissionVOTree) {
+        List<RouterVO> routerTreeList = new ArrayList<>();
+        //首先遍历一级目录
+        permissionVOTree.forEach(permissionVO -> {
+            RouterVO routerVO = new RouterVO();
+            routerVO.setName(permissionVO.getName());
+            routerVO.setIcon(permissionVO.getIcon());
+            routerVO.setPath(permissionVO.getPath());
+            List<PermissionVO> childPermissionVOTree = permissionVO.getChildren();
+            if (!CollectionUtils.isEmpty(childPermissionVOTree) && permissionVO.getType() == 0) {
+                List<RouterVO> childRouterTree = new ArrayList<>();
+                childPermissionVOTree.forEach(childPermissionVO -> {
+                    RouterVO childRouter = new RouterVO();
+                    childRouter.setName(childPermissionVO.getName());
+                    childRouter.setIcon(childPermissionVO.getIcon());
+                    childRouter.setPath(childPermissionVO.getPath());
+                    childRouterTree.add(childRouter);
+                });
+                routerVO.setChildren(childRouterTree);
+            }
+            routerTreeList.add(routerVO);
+        });
+        return routerTreeList;
     }
 
     private List<PermissionVO> buildTree(List<PermissionVO> permissionVOList) {

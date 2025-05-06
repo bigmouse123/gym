@@ -4,7 +4,8 @@ export const useAdminInfoStore = defineStore('adminInfo', {
     //存储数据地方
     state() {
         return {
-            admin: {}
+            admin: {},
+            btns: []
         }
     },
     //actions里面放的是一个一个方法
@@ -14,6 +15,12 @@ export const useAdminInfoStore = defineStore('adminInfo', {
         },
         removeAdminInfo() {
             this.admin = {}
+        },
+        setBtns(btns) {
+            this.btns = btns
+        },
+        removeBtns() {
+            this.btns = []
         }
     },
     persist: {

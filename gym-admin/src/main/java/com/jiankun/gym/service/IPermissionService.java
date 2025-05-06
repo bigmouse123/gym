@@ -3,6 +3,7 @@ package com.jiankun.gym.service;
 import com.jiankun.gym.pojo.entity.Permission;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiankun.gym.pojo.vo.PermissionVO;
+import com.jiankun.gym.pojo.vo.RouterVO;
 
 import java.util.List;
 import java.util.Map;
@@ -22,4 +23,8 @@ public interface IPermissionService extends IService<Permission> {
     Map<String, Object> selectAssignedPermission(Long roleId);
 
     void assignPermission(Long roleId, Long[] permissionIds);
+
+    List<RouterVO> selectRouterTreeByAdminId(Integer id);
+
+    List<String> selectBtnListByAdmminId(Integer id);
 }

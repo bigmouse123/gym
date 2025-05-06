@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiankun.gym.mapper.AdminRoleMapper;
+import com.jiankun.gym.mapper.PermissionMapper;
 import com.jiankun.gym.mapper.RoleMapper;
 import com.jiankun.gym.pojo.entity.Admin;
 import com.jiankun.gym.mapper.AdminMapper;
 import com.jiankun.gym.pojo.entity.AdminRole;
 import com.jiankun.gym.pojo.entity.Role;
 import com.jiankun.gym.pojo.query.AdminQuery;
+import com.jiankun.gym.pojo.vo.RouterVO;
 import com.jiankun.gym.service.IAdminService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiankun.gym.util.Result;
@@ -38,6 +40,8 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     private RoleMapper roleMapper;
     @Autowired
     private AdminRoleMapper adminRoleMapper;
+    @Autowired
+    private PermissionServiceImpl permissionService;
 
     @Override
     public IPage<Admin> list(AdminQuery adminQuery) {
@@ -74,5 +78,21 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
             adminRole.setRoleId(roleId);
             adminRoleMapper.insert(adminRole);
         }
+    }
+
+    @Override
+    public Map<String, Object> selectAdminPermissionInfoById(Integer id) {
+        //根据id查询用户信息
+        Admin admin = adminMapper.selectById(id);
+        //根据adminId查找菜单权限
+        List<RouterVO> routerVOList = permissionService.selectRouterTreeByAdminId(id);
+        //根据adminId查找按钮权限
+        List<String> btnList = permissionService.selectBtnListByAdmminId(id);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("admin", admin);
+        map.put("routers", routerVOList);
+        map.put("btns", btnList);
+        return map;
     }
 }
